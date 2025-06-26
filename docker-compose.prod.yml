@@ -1,0 +1,59 @@
+services:
+    web:
+      build:
+        context: /docker/prod/nginx
+        dockerfile: Dockerfile
+      image: ghcr.io/you/your-repo:nginx-{{ github.sha }}
+      ports:
+        - "80:80"
+      depends_on:
+        - php
+      networks:
+        - app
+      volumes:
+        - ./infra/certbot/conf:/etc/letsencrypt
+        - ./infra/certbot/www:/var/www/certbot
+    php:
+      build:
+        context: /docker/prod/php-fpm
+        dockerfile: Dockerfile
+      image: ghcr.io/you/your-repo:php-fpm-{{ github.sha }}
+      expose:
+        - "9000"
+      networks:
+        - app
+      depends_on:
+        - mysql
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'sail-mysql:/var/lib/mysql'
+        networks:
+            - app
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD}'
+            retries: 3
+            timeout: 5s
+    certbot:
+      image: certbot/certbot
+      volumes:
+        - ./infra/certbot/conf:/etc/letsencrypt
+        - ./infra/certbot/www:/var/www/certbot
+      entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+networks:
+    app:
+        driver: bridge
+volumes:
+    sail-mysql:
+        driver: local
