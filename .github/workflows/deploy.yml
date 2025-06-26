@@ -1,0 +1,96 @@
+name: linter
+
+on:
+  push:
+    branches:
+      - *
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_NGINX: ${{ github.repository }}-nginx
+  IMAGE_NAME_PHP_FPM: ${{ github.repository }}-php-fpm
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Install Laravel Dependencies
+        run: |
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+          npm install
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker Nginx
+        id: meta-nginx
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
+
+      - name: Extract metadata (tags, labels) for Docker PHP-FPM
+        id: meta-php-fpm
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
+
+      - name: Build and push Docker image Nginx
+        id: push-nginx
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: docker/prod/nginx
+          push: true
+          tags: ${{ steps.meta-nginx.outputs.tags }}
+          labels: ${{ steps.meta-nginx.outputs.labels }}
+
+      - name: Build and push Docker image PHP-FPM
+        id: push-php-fpm
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: docker/prod/php-fpm
+          push: true
+          tags: ${{ steps.meta-php-fpm.outputs.tags }}
+          labels: ${{ steps.meta-php-fpm.nginx.outputs.labels }}
+
+      - name: Generate artifact attestation for Nginx
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX}}
+          subject-digest: ${{ steps.push-nginx.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation for PHP-FPM
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM}}
+          subject-digest: ${{ steps.push-php-fpm.outputs.digest }}
+          push-to-registry: true
