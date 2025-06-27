@@ -1,4 +1,4 @@
-FROM nginx:1.29-alpine
+FROM nginx:1.28-alpine
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
     && apk update \
