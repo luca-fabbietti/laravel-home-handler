@@ -1,9 +1,6 @@
 services:
     web:
-      build:
-        context: /docker/prod/nginx
-        dockerfile: Dockerfile
-      image: ghcr.io/you/your-repo:nginx-{{ github.sha }}
+      image: ghcr.io/luca-fabbietti/laravel-home-handler-nginx:ci-test
       ports:
         - "80:80"
       depends_on:
@@ -14,10 +11,7 @@ services:
         - ./infra/certbot/conf:/etc/letsencrypt
         - ./infra/certbot/www:/var/www/certbot
     php:
-      build:
-        context: /docker/prod/php-fpm
-        dockerfile: Dockerfile
-      image: ghcr.io/you/your-repo:php-fpm-{{ github.sha }}
+      image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm:ci-test
       expose:
         - "9000"
       networks:
