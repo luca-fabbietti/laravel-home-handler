@@ -67,7 +67,8 @@ jobs:
         id: push-nginx
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: docker/prod/nginx
+          context: .
+          file: docker/prod/nginx/Dockerfile
           push: true
           tags: ${{ steps.meta-nginx.outputs.tags }}
           labels: ${{ steps.meta-nginx.outputs.labels }}
@@ -76,7 +77,8 @@ jobs:
         id: push-php-fpm
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: docker/prod/php-fpm
+          context: .
+          file: docker/prod/php-fpm/Dockerfile
           push: true
           tags: ${{ steps.meta-php-fpm.outputs.tags }}
           labels: ${{ steps.meta-php-fpm.nginx.outputs.labels }}
