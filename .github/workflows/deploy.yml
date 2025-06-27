@@ -83,16 +83,16 @@ jobs:
           tags: ${{ steps.meta-php-fpm.outputs.tags }}
           labels: ${{ steps.meta-php-fpm.nginx.outputs.labels }}
 
-      - name: Generate artifact attestation for Nginx
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX}}
-          subject-digest: ${{ steps.push-nginx.outputs.digest }}
-          push-to-registry: true
-
-      - name: Generate artifact attestation for PHP-FPM
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM}}
-          subject-digest: ${{ steps.push-php-fpm.outputs.digest }}
-          push-to-registry: true
+#      - name: Generate artifact attestation for Nginx
+#        uses: actions/attest-build-provenance@v2
+#        with:
+#          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX}}
+#          subject-digest: ${{ steps.push-nginx.outputs.digest }}
+#          push-to-registry: true
+#
+#      - name: Generate artifact attestation for PHP-FPM
+#        uses: actions/attest-build-provenance@v2
+#        with:
+#          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM}}
+#          subject-digest: ${{ steps.push-php-fpm.outputs.digest }}
+#          push-to-registry: true
