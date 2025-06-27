@@ -19,69 +19,69 @@ jobs:
       attestations: write
       id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-
-      - name: Install Laravel Dependencies
-        run: |
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install Node Dependencies
-        run: npm ci
-
-      - name: Build Assets
-        run: npm run build
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker Nginx
-        id: meta-nginx
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
-
-      - name: Extract metadata (tags, labels) for Docker PHP-FPM
-        id: meta-php-fpm
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
-
-      - name: Build and push Docker image Nginx
-        id: push-nginx
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: .
-          file: docker/prod/nginx/Dockerfile
-          push: true
-          tags: ${{ steps.meta-nginx.outputs.tags }}
-          labels: ${{ steps.meta-nginx.outputs.labels }}
-
-      - name: Build and push Docker image PHP-FPM
-        id: push-php-fpm
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: .
-          file: docker/prod/php-fpm/Dockerfile
-          push: true
-          tags: ${{ steps.meta-php-fpm.outputs.tags }}
-          labels: ${{ steps.meta-php-fpm.outputs.labels }}
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: '8.4'
+#
+#      - name: Install Laravel Dependencies
+#        run: |
+#          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+#          npm install
+#
+#      - name: Setup Node
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: '22'
+#          cache: 'npm'
+#
+#      - name: Install Node Dependencies
+#        run: npm ci
+#
+#      - name: Build Assets
+#        run: npm run build
+#
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GHCR_TOKEN }}
+#
+#      - name: Extract metadata (tags, labels) for Docker Nginx
+#        id: meta-nginx
+#        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
+#
+#      - name: Extract metadata (tags, labels) for Docker PHP-FPM
+#        id: meta-php-fpm
+#        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+#        with:
+#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
+#
+#      - name: Build and push Docker image Nginx
+#        id: push-nginx
+#        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+#        with:
+#          context: .
+#          file: docker/prod/nginx/Dockerfile
+#          push: true
+#          tags: ${{ steps.meta-nginx.outputs.tags }}
+#          labels: ${{ steps.meta-nginx.outputs.labels }}
+#
+#      - name: Build and push Docker image PHP-FPM
+#        id: push-php-fpm
+#        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+#        with:
+#          context: .
+#          file: docker/prod/php-fpm/Dockerfile
+#          push: true
+#          tags: ${{ steps.meta-php-fpm.outputs.tags }}
+#          labels: ${{ steps.meta-php-fpm.outputs.labels }}
 
       - name: Pull and deploy Docker images
         uses: appleboy/ssh-action@v1
@@ -89,7 +89,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          fingerprint: ${{ secrets.FINGERPRINT }}
+#          fingerprint: ${{ secrets.FINGERPRINT }}
           port: ${{ secrets.PORT }}
           script: |
             echo "Hello!"
