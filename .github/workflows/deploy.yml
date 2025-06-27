@@ -83,17 +83,6 @@ jobs:
           tags: ${{ steps.meta-php-fpm.outputs.tags }}
           labels: ${{ steps.meta-php-fpm.outputs.labels }}
 
-      - name: Copy docker-compose file
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          fingerprint: ${{ secrets.FINGERPRINT }}
-          port: ${{ secrets.PORT }}
-          source: "docker-compose.prod.yml"
-          target: "~/app"
-
       - name: Pull and deploy Docker images
         uses: appleboy/ssh-action@v1
         with:
@@ -103,9 +92,31 @@ jobs:
           fingerprint: ${{ secrets.FINGERPRINT }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/app
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d
+            echo "Hello!"
+
+#      - name: Copy docker-compose file
+#        uses: appleboy/scp-action@v0.1.4
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.KEY }}
+#          fingerprint: ${{ secrets.FINGERPRINT }}
+#          port: ${{ secrets.PORT }}
+#          source: "docker-compose.prod.yml"
+#          target: "~/app"
+
+#      - name: Pull and deploy Docker images
+#        uses: appleboy/ssh-action@v1
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.KEY }}
+#          fingerprint: ${{ secrets.FINGERPRINT }}
+#          port: ${{ secrets.PORT }}
+#          script: |
+#            cd ~/app
+#            docker compose -f docker-compose.prod.yml pull
+#            docker compose -f docker-compose.prod.yml up -d
 
 #      - name: Generate artifact attestation for Nginx
 #        uses: actions/attest-build-provenance@v2
