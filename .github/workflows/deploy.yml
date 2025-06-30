@@ -24,50 +24,50 @@ jobs:
 
       - name: Rebuild .env from GitHub Secrets
         run: |
-          cat <<-EOF > .env
-          APP_NAME=Laravel
-          APP_ENV=production
-          APP_KEY=${{ secrets.APP_KEY }}
-          APP_DEBUG=false
-          APP_URL=https://laravel.fabbietti.it
-          APP_SERVICE=php-fpm
-          APP_LOCALE=en
-          APP_FALLBACK_LOCALE=en
-          APP_FAKER_LOCALE=en_US
-          APP_MAINTENANCE_DRIVER=file
-          BCRYPT_ROUNDS=12
-          LOG_CHANNEL=daily
-          LOG_LEVEL=warning
-          DB_CONNECTION=mysql
-          DB_HOST=mysql
-          DB_PORT=${{ secrets.DB_PORT }}
-          DB_DATABASE=${{ secrets.DB_DATABASE }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          SESSION_DRIVER=database
-          SESSION_CONNECTION=
-          SESSION_TABLE=sessions
-          SESSION_LIFETIME=120
-          SESSION_ENCRYPT=true
-          SESSION_PATH=/
-          SESSION_DOMAIN=null
-          SESSION_SECURE_COOKIE=true
-          SESSION_SAME_SITE=strict
-          BROADCAST_CONNECTION=log
-          FILESYSTEM_DISK=public
-          QUEUE_CONNECTION=database
-          CACHE_STORE=database
-          MAIL_MAILER=smtp
-          MAIL_SCHEME=${{ secrets.MAIL_SCHEME }}
-          MAIL_HOST=${{ secrets.MAIL_HOST }}
-          MAIL_PORT=${{ secrets.MAIL_PORT }}
-          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-          MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
-          MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}
-          MAIL_EHLO_DOMAIN=${{ secrets.MAIL_EHLO_DOMAIN }}
-          VITE_APP_NAME=Laravel
-          EOF
+          {
+            echo "APP_NAME=Laravel"
+            echo "APP_ENV=production"
+            echo "APP_KEY=${{ secrets.APP_KEY }}"
+            echo "APP_DEBUG=false"
+            echo "APP_URL=https://laravel.fabbietti.it"
+            echo "APP_SERVICE=php-fpm"
+            echo "APP_LOCALE=en"
+            echo "APP_FALLBACK_LOCALE=en"
+            echo "APP_FAKER_LOCALE=en_US"
+            echo "APP_MAINTENANCE_DRIVER=file"
+            echo "BCRYPT_ROUNDS=12"
+            echo "LOG_CHANNEL=daily"
+            echo "LOG_LEVEL=warning"
+            echo "DB_CONNECTION=mysql"
+            echo "DB_HOST=mysql"
+            echo "DB_PORT=${{ secrets.DB_PORT }}"
+            echo "DB_DATABASE=${{ secrets.DB_DATABASE }}"
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            echo "SESSION_DRIVER=database"
+            echo "SESSION_CONNECTION="
+            echo "SESSION_TABLE=sessions"
+            echo "SESSION_LIFETIME=120"
+            echo "SESSION_ENCRYPT=true"
+            echo "SESSION_PATH=/"
+            echo "SESSION_DOMAIN=null"
+            echo "SESSION_SECURE_COOKIE=true"
+            echo "SESSION_SAME_SITE=strict"
+            echo "BROADCAST_CONNECTION=log"
+            echo "FILESYSTEM_DISK=public"
+            echo "QUEUE_CONNECTION=database"
+            echo "CACHE_STORE=database"
+            echo "MAIL_MAILER=smtp"
+            echo "MAIL_SCHEME=${{ secrets.MAIL_SCHEME }}"
+            echo "MAIL_HOST=${{ secrets.MAIL_HOST }}"
+            echo "MAIL_PORT=${{ secrets.MAIL_PORT }}"
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}"
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
+            echo "MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}"
+            echo "MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}"
+            echo "MAIL_EHLO_DOMAIN=${{ secrets.MAIL_EHLO_DOMAIN }}"
+            echo "VITE_APP_NAME=Laravel"
+          } > .env
 
       - name: Upload .env as artifact
         uses: actions/upload-artifact@v4
