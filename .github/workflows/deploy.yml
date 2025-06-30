@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: “Rebuild .env from GitHub Secrets”
+      - name: Rebuild .env from GitHub Secrets
         run: |
           cat <<EOF > .env
             APP_NAME=Laravel
@@ -68,6 +68,13 @@ jobs:
             MAIL_EHLO_DOMAIN=${{ secrets.MAIL_EHLO_DOMAIN }}
             VITE_APP_NAME=Laravel
           EOF
+
+      - name: Upload .env as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: env-file
+          path: .env
+          retention-days: 1
 
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
