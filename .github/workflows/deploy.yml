@@ -73,7 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: .env
+          path: .
           retention-days: 1
 
       - name: Log in to the Container registry
