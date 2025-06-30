@@ -4,13 +4,13 @@ services:
       ports:
         - "80:80"
       depends_on:
-        - php
+        - php-fpm
       networks:
         - app
       volumes:
         - ./infra/certbot/conf:/etc/letsencrypt
         - ./infra/certbot/www:/var/www/certbot
-    php:
+    php-fpm:
       image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm:ci-test
       expose:
         - "9000"
