@@ -16,6 +16,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm ci
 COPY .. .
 RUN npm run build
+RUN rm -rf node_modules
 
 FROM php:8.4-fpm-alpine AS php-fpm
 RUN docker-php-ext-install bcmath
