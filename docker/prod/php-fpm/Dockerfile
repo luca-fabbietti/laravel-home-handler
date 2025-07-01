@@ -1,29 +1,9 @@
-FROM php:8.4-fpm-alpine AS builder
-
-RUN apk add --no-cache \
-      icu-dev libxml2-dev oniguruma-dev zip unzip nodejs npm git
-
-RUN docker-php-ext-install bcmath pdo_mysql
-
-WORKDIR /app
-COPY . ./
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }" \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar /usr/local/bin/composer
-RUN composer install --no-dev --optimize-autoloader
-RUN npm ci
-COPY .. .
-RUN npm run build
-RUN rm -rf node_modules
-
 FROM php:8.4-fpm-alpine AS php-fpm
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
  && docker-php-ext-install pdo_mysql bcmath \
  && apk del .build-deps
 WORKDIR /var/www/html
-COPY --from=builder --chown=www-data:www-data /app /var/www/html
+COPY --chown=www-data:www-data . /var/www/html/
 RUN chmod -R 775 storage bootstrap/cache
 USER www-data
 EXPOSE 9000
