@@ -3,6 +3,7 @@ services:
       image: ghcr.io/luca-fabbietti/laravel-home-handler-nginx:ci-test
       ports:
         - "80:80"
+        - "443:443"
       depends_on:
         - php-fpm
       networks:
