@@ -77,68 +77,68 @@ jobs:
           retention-days: 1
           include-hidden-files: 'true'
 
-#      - name: Log in to the Container registry
-#        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-#        with:
-#          registry: ${{ env.REGISTRY }}
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GHCR_TOKEN }}
-#
-#      - name: Extract metadata (tags, labels) for Docker Nginx
-#        id: meta-nginx
-#        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-#        with:
-#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
-#
-#      - name: Extract metadata (tags, labels) for Docker PHP-FPM
-#        id: meta-php-fpm
-#        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-#        with:
-#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
-#
-#      - name: Build and push Docker image Nginx
-#        id: push-nginx
-#        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-#        with:
-#          context: .
-#          file: docker/prod/nginx/Dockerfile
-#          push: true
-#          tags: ${{ steps.meta-nginx.outputs.tags }}
-#          labels: ${{ steps.meta-nginx.outputs.labels }}
-#
-#      - name: Build and push Docker image PHP-FPM
-#        id: push-php-fpm
-#        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-#        with:
-#          context: .
-#          file: docker/prod/php-fpm/Dockerfile
-#          push: true
-#          tags: ${{ steps.meta-php-fpm.outputs.tags }}
-#          labels: ${{ steps.meta-php-fpm.outputs.labels }}
-#
-#      - name: Copy docker-compose file
-#        uses: appleboy/scp-action@v0.1.4
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          key: ${{ secrets.KEY }}
-##          fingerprint: ${{ secrets.FINGERPRINT }}
-#          port: ${{ secrets.PORT }}
-#          source: "docker-compose.prod.yml"
-#          target: "~/app"
-#
-#      - name: Pull and deploy Docker images
-#        uses: appleboy/ssh-action@v1
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          key: ${{ secrets.KEY }}
-##          fingerprint: ${{ secrets.FINGERPRINT }}
-#          port: ${{ secrets.PORT }}
-#          script: |
-#            cd ~/app
-#            docker compose -f docker-compose.prod.yml pull
-#            docker compose -f docker-compose.prod.yml up -d
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker Nginx
+        id: meta-nginx
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
+
+      - name: Extract metadata (tags, labels) for Docker PHP-FPM
+        id: meta-php-fpm
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
+
+      - name: Build and push Docker image Nginx
+        id: push-nginx
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: docker/prod/nginx/Dockerfile
+          push: true
+          tags: ${{ steps.meta-nginx.outputs.tags }}
+          labels: ${{ steps.meta-nginx.outputs.labels }}
+
+      - name: Build and push Docker image PHP-FPM
+        id: push-php-fpm
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: docker/prod/php-fpm/Dockerfile
+          push: true
+          tags: ${{ steps.meta-php-fpm.outputs.tags }}
+          labels: ${{ steps.meta-php-fpm.outputs.labels }}
+
+      - name: Copy docker-compose file
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+#          fingerprint: ${{ secrets.FINGERPRINT }}
+          port: ${{ secrets.PORT }}
+          source: "docker-compose.prod.yml"
+          target: "~/app"
+
+      - name: Pull and deploy Docker images
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+#          fingerprint: ${{ secrets.FINGERPRINT }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/app
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
 
 #      - name: Generate artifact attestation for Nginx
 #        uses: actions/attest-build-provenance@v2
