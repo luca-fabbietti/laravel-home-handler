@@ -122,9 +122,18 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-#          fingerprint: ${{ secrets.FINGERPRINT }}
           port: ${{ secrets.PORT }}
           source: "docker-compose.prod.yml"
+          target: "~/app"
+
+      - name: Copy .env file
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: ".env"
           target: "~/app"
 
       - name: Pull and deploy Docker images
@@ -133,7 +142,6 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-#          fingerprint: ${{ secrets.FINGERPRINT }}
           port: ${{ secrets.PORT }}
           script: |
             cd ~/app
