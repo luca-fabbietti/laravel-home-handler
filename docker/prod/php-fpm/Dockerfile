@@ -3,7 +3,7 @@ FROM php:8.4-fpm-alpine AS builder
 RUN apk add --no-cache \
       icu-dev libxml2-dev oniguruma-dev zip unzip nodejs npm git
 
-RUN docker-php-ext-install bcmath
+RUN docker-php-ext-install bcmath pdo_mysql
 
 WORKDIR /app
 COPY . ./
