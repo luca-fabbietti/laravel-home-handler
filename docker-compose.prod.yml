@@ -9,14 +9,17 @@ services:
       networks:
         - app
       volumes:
-        - ./infra/certbot/conf:/etc/letsencrypt
-        - ./infra/certbot/www:/var/www/certbot
+        - ./infra/certbot/conf:/etc/letsencrypt:ro
+        - ./infra/certbot/www:/var/www/certbot:ro
+        - storage:/var/www/html/public/storage:ro
     php-fpm:
       image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm:ci-test
       expose:
         - "9000"
       networks:
         - app
+      volumes:
+        - storage:/var/www/html/public/storage:rw
       depends_on:
         - mysql
     mysql:
@@ -43,12 +46,14 @@ services:
     certbot:
       image: certbot/certbot:v4.1.1
       volumes:
-        - ./infra/certbot/conf:/etc/letsencrypt
-        - ./infra/certbot/www:/var/www/certbot
+        - ./infra/certbot/conf:/etc/letsencrypt:rw
+        - ./infra/certbot/www:/var/www/certbot:rw
       entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 networks:
     app:
         driver: bridge
 volumes:
     sail-mysql:
+        driver: local
+    storage:
         driver: local
