@@ -31,6 +31,7 @@ jobs:
           path: ./node_modules
           key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
             ${{ runner.os }}-node-modules-${{ env.cache-name }}-
             ${{ runner.os }}-node-modules-
 
@@ -43,6 +44,7 @@ jobs:
           path: ./vendor
           key: ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.json') }}
             ${{ runner.os }}-composer-${{ env.cache-name }}-
             ${{ runner.os }}-composer-
 
