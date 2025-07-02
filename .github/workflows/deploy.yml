@@ -33,7 +33,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-${{ env.cache-name }}-
             ${{ runner.os }}-node-modules-
-            ${{ runner.os }}-
 
       - name: Cache composer dependencies
         id: cache-composer
@@ -46,7 +45,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-${{ env.cache-name }}-
             ${{ runner.os }}-composer-
-            ${{ runner.os }}-
 
       - name: Rebuild .env from GitHub Secrets
         run: |
