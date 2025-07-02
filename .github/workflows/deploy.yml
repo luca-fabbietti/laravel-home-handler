@@ -31,7 +31,7 @@ jobs:
           path: ./node_modules
           key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
             ${{ runner.os }}-node-modules-${{ env.cache-name }}-
             ${{ runner.os }}-node-modules-
 
@@ -44,7 +44,7 @@ jobs:
           path: ./vendor
           key: ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.json') }}
+            ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
             ${{ runner.os }}-composer-${{ env.cache-name }}-
             ${{ runner.os }}-composer-
 
@@ -114,7 +114,6 @@ jobs:
         run: |
           npm ci
           npm run build
-          rm -rf node_modules
 
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
