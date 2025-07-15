@@ -1,0 +1,203 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - 'master'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_NGINX: ${{ github.repository }}-nginx
+  IMAGE_NAME_PHP_FPM: ${{ github.repository }}-php-fpm
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+            ${{ runner.os }}-node-modules-${{ env.cache-name }}-
+            ${{ runner.os }}-node-modules-
+
+      - name: Cache composer dependencies
+        id: cache-composer
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-composer-dependencies
+        with:
+          path: ./vendor
+          key: ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
+            ${{ runner.os }}-composer-${{ env.cache-name }}-
+            ${{ runner.os }}-composer-
+
+      - name: Rebuild .env from GitHub Secrets
+        run: |
+          {
+            echo "APP_NAME=Laravel"
+            echo "APP_ENV=production"
+            echo "APP_KEY=${{ secrets.APP_KEY }}"
+            echo "APP_DEBUG=false"
+            echo "APP_URL=https://laravel.fabbietti.it"
+            echo "APP_SERVICE=php-fpm"
+            echo "APP_LOCALE=en"
+            echo "APP_FALLBACK_LOCALE=en"
+            echo "APP_FAKER_LOCALE=en_US"
+            echo "APP_MAINTENANCE_DRIVER=file"
+            echo "BCRYPT_ROUNDS=12"
+            echo "LOG_CHANNEL=daily"
+            echo "LOG_LEVEL=warning"
+            echo "DB_CONNECTION=mysql"
+            echo "DB_HOST=mysql"
+            echo "DB_PORT=${{ secrets.DB_PORT }}"
+            echo "DB_DATABASE=${{ secrets.DB_DATABASE }}"
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            echo "SESSION_DRIVER=database"
+            echo "SESSION_CONNECTION="
+            echo "SESSION_TABLE=sessions"
+            echo "SESSION_LIFETIME=120"
+            echo "SESSION_ENCRYPT=true"
+            echo "SESSION_PATH=/"
+            echo "SESSION_DOMAIN=null"
+            echo "SESSION_SECURE_COOKIE=true"
+            echo "SESSION_SAME_SITE=strict"
+            echo "BROADCAST_CONNECTION=log"
+            echo "FILESYSTEM_DISK=public"
+            echo "QUEUE_CONNECTION=database"
+            echo "CACHE_STORE=database"
+            echo "MAIL_MAILER=smtp"
+            echo "MAIL_SCHEME=${{ secrets.MAIL_SCHEME }}"
+            echo "MAIL_HOST=${{ secrets.MAIL_HOST }}"
+            echo "MAIL_PORT=${{ secrets.MAIL_PORT }}"
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}"
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
+            echo "MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}"
+            echo "MAIL_FROM_NAME=${{ secrets.MAIL_FROM_NAME }}"
+            echo "MAIL_EHLO_DOMAIN=${{ secrets.MAIL_EHLO_DOMAIN }}"
+            echo "VITE_APP_NAME=Laravel"
+          } > .env
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, bcmath
+
+      - name: Install Laravel Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Node Dependencies, Build Assets, remove dev dependencies
+        run: |
+          npm ci
+          npm run build
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker Nginx
+        id: meta-nginx
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
+
+      - name: Extract metadata (tags, labels) for Docker PHP-FPM
+        id: meta-php-fpm
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
+
+      - name: Build and push Docker image Nginx
+        id: push-nginx
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: docker/prod/nginx/Dockerfile
+          push: true
+          tags: ${{ steps.meta-nginx.outputs.tags }}
+          labels: ${{ steps.meta-nginx.outputs.labels }}
+
+      - name: Build and push Docker image PHP-FPM
+        id: push-php-fpm
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: docker/prod/php-fpm/Dockerfile
+          push: true
+          tags: ${{ steps.meta-php-fpm.outputs.tags }}
+          labels: ${{ steps.meta-php-fpm.outputs.labels }}
+
+      - name: Copy docker-compose file
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: "docker-compose.prod.yml"
+          target: "~/app"
+
+      - name: Copy .env file
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: ".env"
+          target: "~/app"
+
+      - name: Pull and deploy Docker images
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/app
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml exec -u root php-fpm sh -c "chmod +x /var/www/html/deploy.sh && /var/www/html/deploy.sh"
+            docker system prune -f
+
+#      - name: Generate artifact attestation for Nginx
+#        uses: actions/attest-build-provenance@v2
+#        with:
+#          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX}}
+#          subject-digest: ${{ steps.push-nginx.outputs.digest }}
+#          push-to-registry: true
+#
+#      - name: Generate artifact attestation for PHP-FPM
+#        uses: actions/attest-build-provenance@v2
+#        with:
+#          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM}}
+#          subject-digest: ${{ steps.push-php-fpm.outputs.digest }}
+#          push-to-registry: true
