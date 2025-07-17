@@ -2,48 +2,110 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Resources\ListRowResource;
+use App\Models\ListModel;
 use App\Models\ListRow;
-use Illuminate\Http\Request;
 
 class ListRowController extends ApiController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(int $list_id)
     {
-        //
+        request()->validate([
+            'created_by' => 'sometimes|integer|exists:users,id',
+        ]);
+
+        $list = ListModel::findOrFail($list_id);
+
+        if($list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+            return response()->json([
+                'error' => 'Unauthorized access to this list.'
+            ], 403);
+        }
+
+        $listRows = ListRow::with('product')
+            ->where('list_id', $list_id)
+            ->get();
+
+        return ListRowResource::collection($listRows);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(int $list_id)
     {
-        //
-    }
+        $validated = request()->validate([
+            'product_id' => 'required|integer|exists:products,id',
+            'qty_value' => 'required|string',
+            'qty_uom' => 'required|string',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(ListRow $listRow)
-    {
-        //
+        $list = ListModel::findOrFail($list_id);
+
+        if($list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+            return response()->json([
+                'error' => 'Unauthorized access to this list.'
+            ], 403);
+        }
+
+        $listRow = ListRow::create([...$validated, 'list_id' => $list_id, 'created_by' => 1]); //TODO: Replace with the authenticated user ID
+        return ListRowResource::make($listRow);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ListRow $listRow)
+    public function update(int $list_id, int $row_id)
     {
-        //
+        $validated = request()->validate([
+            'product_id' => 'sometimes|integer|exists:products,id',
+            'qty_value' => 'sometimes|string',
+            'qty_uom' => 'sometimes|string',
+        ]);
+
+        $list = ListModel::find($list_id);
+        if(empty($list) || $list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+            return response()->json([
+                'error' => 'Unauthorized access to this list.'
+            ], 403);
+        }
+
+        $listRow = ListRow::where('list_id', $list_id)->find($row_id);
+        if (empty($listRow) ) {
+            return response()->json([
+                'error' => 'List row not found.'
+            ], 404);
+        }
+
+        $listRow->update($validated);
+
+        return ListRowResource::make($listRow);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ListRow $listRow)
+    public function destroy(int $list_id, int $row_id)
     {
-        //
+        $list = ListModel::find($list_id);
+        if(empty($list) || $list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+            return response()->json([
+                'error' => 'Unauthorized access to this list.'
+            ], 403);
+        }
+
+        $listRow = ListRow::where('list_id', $list_id)->find($row_id);
+        if (empty($listRow)) {
+            return response()->json([
+                'error' => 'List row not found.'
+            ], 404);
+        }
+
+        $listRow->delete();
+
+        return response()->noContent();
     }
 }

@@ -16,6 +16,7 @@ class ListRow extends Model
         'qty_value',
         'qty_uom',
         'completed',
+        'created_by',
     ];
 
     /**

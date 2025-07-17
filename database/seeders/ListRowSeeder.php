@@ -12,6 +12,6 @@ class ListRowSeeder extends Seeder
      */
     public function run(): void
     {
-        ListRowFactory::new()->count(200)->create();
+        ListRowFactory::new()->count(2000)->create();
     }
 }

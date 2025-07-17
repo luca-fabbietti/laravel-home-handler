@@ -12,6 +12,6 @@ class ListModelSeeder extends Seeder
      */
     public function run(): void
     {
-        ListModelFactory::new()->count(5)->create();
+        ListModelFactory::new()->count(50)->create();
     }
 }
