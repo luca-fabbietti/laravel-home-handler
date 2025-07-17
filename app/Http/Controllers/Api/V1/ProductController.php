@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class ProductController extends ApiController
      */
     public function index()
     {
-        //
+        return ProductResource::collection(Product::paginate());
     }
 
     /**
@@ -20,7 +21,15 @@ class ProductController extends ApiController
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:30|unique:products,name',
+            'description' => 'nullable|string',
+            'created_by' => 'required|integer|exists:users,id',
+        ]);
+
+        $product = Product::create($validated);
+
+        return new ProductResource($product);
     }
 
     /**
@@ -28,7 +37,7 @@ class ProductController extends ApiController
      */
     public function show(Product $product)
     {
-        //
+        return new ProductResource($product);
     }
 
     /**
@@ -36,7 +45,15 @@ class ProductController extends ApiController
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:30|unique:products,name',
+            'description' => 'nullable|string',
+            'created_by' => 'required|integer|exists:users,id',
+        ]);
+
+        $product->update($validated);
+
+        return new ProductResource($product);
     }
 
     /**
@@ -44,6 +61,8 @@ class ProductController extends ApiController
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        return response()->noContent();
     }
 }
