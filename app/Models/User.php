@@ -45,4 +45,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the products created by the user.
+     */
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'created_by');
+    }
+    /**
+     * Get the lists created by the user.
+     */
+    public function lists()
+    {
+        return $this->hasMany(ListModel::class, 'created_by');
+    }
+    /**
+     * Get the list rows created by the user.
+     */
+    public function listRows()
+    {
+        return $this->hasMany(ListRow::class, 'created_by');
+    }
 }
