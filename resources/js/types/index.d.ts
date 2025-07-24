@@ -41,3 +41,31 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface List {
+    id: number;
+    name: string;
+    description: string;
+}
+
+export interface LinksPagination {
+    first: string;
+    last: string;
+    next: string | null;
+    prev: string | null;
+}
+
+export interface MetaPagination {
+    current_page: number;
+    from: number;
+    last_page: number;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
+export interface PaginatedLists {
+    data: List[];
+    links: LinksPagination;
+    meta: MetaPagination;
+}
