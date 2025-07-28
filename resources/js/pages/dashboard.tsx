@@ -40,7 +40,7 @@ export default function Dashboard() {
                                 <CardTitle className="flex justify-start items-center overflow-hidden text-ellipsis">{list.attributes.name}</CardTitle>
                                 <CardAction>
                                     <Button asChild>
-                                        <Link href={`#`} className="w-full">
+                                        <Link href={`/list/${list.id}`} className="w-full">
                                             View List
                                         </Link>
                                     </Button>

@@ -16,13 +16,14 @@ class ListRowResource extends JsonResource
     {
         return [
             'type' => 'List Row',
-            'id' => (string) $this->id,
+            'id' => (string)$this->id,
             'attributes' => [
                 'product' => [
                     'id' => $this->product->id,
                     'name' => $this->product->name,
                     'description' => $this->product->description,
                 ],
+                'list_id' => $this->list_id,
                 'quantity' => $this->qty_value,
                 'quantity_unit' => $this->qty_uom,
                 'created_by' => $this->created_by,

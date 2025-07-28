@@ -19,7 +19,7 @@ class ListRowController extends ApiController
 
         $list = ListModel::findOrFail($list_id);
 
-        if($list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+        if ($list->createdBy->id !== auth()->id()) {
             return response()->json([
                 'error' => 'Unauthorized access to this list.'
             ], 403);
@@ -45,7 +45,7 @@ class ListRowController extends ApiController
 
         $list = ListModel::findOrFail($list_id);
 
-        if($list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+        if ($list->createdBy->id !== auth()->id()) {
             return response()->json([
                 'error' => 'Unauthorized access to this list.'
             ], 403);
@@ -67,14 +67,14 @@ class ListRowController extends ApiController
         ]);
 
         $list = ListModel::find($list_id);
-        if(empty($list) || $list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+        if (empty($list) || $list->createdBy->id !== auth()->id()) {
             return response()->json([
                 'error' => 'Unauthorized access to this list.'
             ], 403);
         }
 
         $listRow = ListRow::where('list_id', $list_id)->find($row_id);
-        if (empty($listRow) ) {
+        if (empty($listRow)) {
             return response()->json([
                 'error' => 'List row not found.'
             ], 404);
@@ -91,7 +91,7 @@ class ListRowController extends ApiController
     public function destroy(int $list_id, int $row_id)
     {
         $list = ListModel::find($list_id);
-        if(empty($list) || $list->createdBy->id !== 1){ //TODO: Replace with a proper check for the authenticated user
+        if (empty($list) || $list->createdBy->id !== auth()->id()) {
             return response()->json([
                 'error' => 'Unauthorized access to this list.'
             ], 403);
