@@ -1,4 +1,6 @@
 import { ListRowsTable } from '@/components/list-rows-table';
+
+import AlertError from '@/components/alert-error';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, ListRow } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -11,12 +13,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
-    const listRows: ListRow[] = usePage().props.listRows.data as ListRow[];
-    console.log('List Rows:', listRows);
+    const props = usePage().props;
+    const listRows: ListRow[] = props.listRows.data as unknown as ListRow[];
+    const { errors } = usePage().props;
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="List" />
-            <ListRowsTable data={listRows} />
-        </AppLayout>
+        <div className="relative">
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="List" />
+                {errors && Object.entries(errors).length > 0 && <AlertError errorText={'Impossible to edit entry'} errors={errors} />}
+                <ListRowsTable data={listRows} />
+            </AppLayout>
+        </div>
     );
 }

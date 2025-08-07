@@ -97,6 +97,7 @@ const columns: ColumnDef<ListRow>[] = [
                                         rowId={row.getValue('id')}
                                         quantity={row.getValue('attributes.quantity')}
                                         quantityUnit={row.getValue('attributes.quantity_unit')}
+                                        productId={row.original.attributes.product.id}
                                     />
                                 </DropdownMenuItem>
                             </div>

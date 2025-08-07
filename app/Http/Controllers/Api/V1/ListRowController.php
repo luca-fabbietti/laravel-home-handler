@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Requests\ListRowRequest;
 use App\Http\Resources\ListRowResource;
 use App\Models\ListModel;
 use App\Models\ListRow;
@@ -51,61 +52,27 @@ class ListRowController extends ApiController
             ], 403);
         }
 
-        $listRow = ListRow::create([...$validated, 'list_id' => $list_id, 'created_by' => 1]); //TODO: Replace with the authenticated user ID
+        $listRow = ListRow::create([...$validated, 'list_id' => $list_id, 'created_by' => auth()->id()]);
         return ListRowResource::make($listRow);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $list_id, int $row_id)
+    public function update(ListRowRequest $request)
     {
-        $validated = request()->validate([
-            'product_id' => 'sometimes|integer|exists:products,id',
-            'qty_value' => 'sometimes|string',
-            'qty_uom' => 'sometimes|string',
-        ]);
-
-        $list = ListModel::find($list_id);
-        if (empty($list) || $list->createdBy->id !== auth()->id()) {
-            return response()->json([
-                'error' => 'Unauthorized access to this list.'
-            ], 403);
-        }
-
-        $listRow = ListRow::where('list_id', $list_id)->find($row_id);
-        if (empty($listRow)) {
-            return response()->json([
-                'error' => 'List row not found.'
-            ], 404);
-        }
-
-        $listRow->update($validated);
-
-        return ListRowResource::make($listRow);
+        ListRow::where('id', $request->row_id)->update($request->validated());
+        return back()->with('success', 'Row successfully edited.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $list_id, int $row_id)
+    public function destroy(ListRowRequest $request)
     {
-        $list = ListModel::find($list_id);
-        if (empty($list) || $list->createdBy->id !== auth()->id()) {
-            return response()->json([
-                'error' => 'Unauthorized access to this list.'
-            ], 403);
-        }
-
-        $listRow = ListRow::where('list_id', $list_id)->find($row_id);
-        if (empty($listRow)) {
-            return response()->json([
-                'error' => 'List row not found.'
-            ], 404);
-        }
-
-        $listRow->delete();
-
-        return response()->noContent();
+        ListRow::where('list_id', $request->list_id)
+            ->where('id', $request->row_id)
+            ->delete();
+        return back()->with('success', 'Row successfully deleted.');
     }
 }

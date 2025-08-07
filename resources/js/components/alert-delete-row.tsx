@@ -35,12 +35,6 @@ export function AlertDeleteRow({ listId, rowId }: { listId: number; rowId: numbe
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                onSuccess: () => {
-                                    alert('bona');
-                                },
-                                onError: (error) => {
-                                    alert('dio: ', error.message);
-                                },
                             });
                         }}
                     >

@@ -2,9 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export function SheetEditRow({ rowId, listId, quantity, quantityUnit }: { rowId: number; listId: number; quantity: string; quantityUnit: string }) {
+export function SheetEditRow({ rowId, listId, quantity, quantityUnit, productId }: { rowId: number; listId: number; quantity: string; quantityUnit: string; productId: number }) {
     const [qtyValue, setQtyValue] = useState(quantity);
     const [qtyUnit, setQtyUnit] = useState(quantityUnit);
     return (
@@ -35,31 +36,15 @@ export function SheetEditRow({ rowId, listId, quantity, quantityUnit }: { rowId:
                         onClick={() => {
                             const quantity = (document.getElementById('sheet-edit-row-quantity') as HTMLInputElement).value;
                             const quantityUnit = (document.getElementById('sheet-edit-row-unit') as HTMLInputElement).value;
-
-                            fetch(`/api/v1/lists/${listId}/rows/${rowId}`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
+                            router.put(
+                                `/api/v1/lists/${listId}/rows/${rowId}`,
+                                {
+                                    qty_value: quantity,
+                                    qty_uom: quantityUnit,
+                                    product_id: productId,
                                 },
-                                body: JSON.stringify({
-                                    attributes: {
-                                        quantity,
-                                        quantity_unit: quantityUnit,
-                                    },
-                                }),
-                            })
-                                .then((response) => {
-                                    if (!response.ok) {
-                                        throw new Error('Network response was not ok');
-                                    }
-                                    return response.json();
-                                })
-                                .then((data) => {
-                                    console.log('Success:', data);
-                                })
-                                .catch((error) => {
-                                    console.error('Error:', error);
-                                });
+                                {},
+                            );
                         }}
                     >
                         Save changes
