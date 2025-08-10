@@ -28,6 +28,7 @@ export interface SharedData {
     auth: Auth;
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
+
     [key: string]: unknown;
 }
 
@@ -39,5 +40,63 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+
     [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface Product {
+    id: number;
+    name: string;
+    description: string;
+}
+
+export interface List {
+    id: number;
+    name: string;
+    description: string;
+}
+
+export interface ListRow {
+    id: number;
+    attributes: {
+        product: Product;
+        list_id: number;
+        quantity: string;
+        quantity_unit: string;
+        completed: boolean;
+    };
+}
+
+export interface LinksPagination {
+    first: string;
+    last: string;
+    next: string | null;
+    prev: string | null;
+}
+
+export interface MetaPagination {
+    current_page: number;
+    from: number;
+    last_page: number;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
+export interface PaginatedProducts {
+    data: Product[];
+    links: LinksPagination;
+    meta: MetaPagination;
+}
+
+export interface PaginatedLists {
+    data: List[];
+    links: LinksPagination;
+    meta: MetaPagination;
+}
+
+export interface PaginatedListRows {
+    data: ListRow[];
+    links: LinksPagination;
+    meta: MetaPagination;
 }
