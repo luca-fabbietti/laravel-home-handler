@@ -12,6 +12,7 @@ class ListModel extends Model
     use SoftDeletes;
 
     protected $table = 'lists';
+
     protected $fillable = [
         'name',
         'description',
@@ -25,6 +26,7 @@ class ListModel extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
     /**
      * Get the rows associated with the list.
      */

@@ -3,12 +3,12 @@
 use App\Http\Controllers\Api\V1\ListModelController;
 use App\Http\Controllers\Api\V1\ListRowController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Resources\ListModelResource;
 use App\Http\Resources\ListRowResource;
 use App\Models\ListModel;
 use App\Models\ListRow;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Resources\ListModelResource;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             }])
             ->select('id', 'name', 'description')
             ->paginate();
+
         return Inertia::render('dashboard',
             [
                 'lists' => ListModelResource::collection($listsPaginated),
@@ -32,12 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('list/{list_id}', function ($list_id) {
-        if (!is_numeric($list_id)) {
+        if (! is_numeric($list_id)) {
             abort(422, 'Invalid list ID');
         }
         $list = ListModel::where('id', $list_id)
             ->first();
-        if (!$list) {
+        if (! $list) {
             abort(404, 'List not found');
         }
         if ($list->created_by !== auth()->id()) {
@@ -47,9 +48,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->with(['product' => function ($query) {
                 $query->select('id', 'name');
             }])->get();
+
         return Inertia::render('list/index', [
             'list' => ListModelResource::make($list),
-            'listRows' => ListRowResource::collection($listRows)
+            'listRows' => ListRowResource::collection($listRows),
         ]);
 
     })->name('list.index');
@@ -69,5 +71,5 @@ Route::prefix('api/v1')->middleware(['auth', 'verified'])->group(function () {
 
 });
 
-require __DIR__ . '/settings.php';
-require __DIR__ . '/auth.php';
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';

@@ -5,25 +5,37 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export function SheetEditRow({ rowId, listId, quantity, quantityUnit, productId }: { rowId: number; listId: number; quantity: string; quantityUnit: string; productId: number }) {
+export function SheetEditRow({
+    rowId,
+    listId,
+    quantity,
+    quantityUnit,
+    productId,
+}: {
+    rowId: number;
+    listId: number;
+    quantity: string;
+    quantityUnit: string;
+    productId: number;
+}) {
     const [qtyValue, setQtyValue] = useState(quantity);
     const [qtyUnit, setQtyUnit] = useState(quantityUnit);
     const [open, setOpen] = useState(false);
 
-        const handleSave = () => {
-            const quantity = (document.getElementById('sheet-edit-row-quantity') as HTMLInputElement).value;
-            const quantityUnit = (document.getElementById('sheet-edit-row-unit') as HTMLInputElement).value;
-            router.put(
-                `/api/v1/lists/${listId}/rows/${rowId}`,
-                {
-                    qty_value: quantity,
-                    qty_uom: quantityUnit,
-                    product_id: productId,
-                },
-                {},
-            );
-            setOpen(false); // Close sheet after save
-        };
+    const handleSave = () => {
+        const quantity = (document.getElementById('sheet-edit-row-quantity') as HTMLInputElement).value;
+        const quantityUnit = (document.getElementById('sheet-edit-row-unit') as HTMLInputElement).value;
+        router.put(
+            `/api/v1/lists/${listId}/rows/${rowId}`,
+            {
+                qty_value: quantity,
+                qty_uom: quantityUnit,
+                product_id: productId,
+            },
+            {},
+        );
+        setOpen(false); // Close sheet after save
+    };
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -57,7 +69,9 @@ export function SheetEditRow({ rowId, listId, quantity, quantityUnit, productId 
                         Save changes
                     </Button>
                     <SheetClose asChild>
-                        <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
+                        <Button variant="outline" onClick={() => setOpen(false)}>
+                            Close
+                        </Button>
                     </SheetClose>
                 </SheetFooter>
             </SheetContent>

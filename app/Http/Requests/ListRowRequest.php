@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\ListModel;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ListRowRequest extends FormRequest
 {

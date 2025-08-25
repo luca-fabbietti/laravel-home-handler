@@ -62,6 +62,7 @@ class ListModelController extends ApiController
     public function destroy(ListModel $list)
     {
         $list->delete();
+
         return response()->noContent();
     }
 }

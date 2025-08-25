@@ -10,6 +10,7 @@ class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'name',
         'description',
@@ -23,6 +24,7 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
     /**
      * Get the lists that contain the product.
      */
