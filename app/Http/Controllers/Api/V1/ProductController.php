@@ -65,4 +65,22 @@ class ProductController extends ApiController
 
         return response()->noContent();
     }
+
+    /**
+     * Return products based on its searched name.
+     */
+    public function searchByName(Request $request)
+    {
+        $searchTerm = $request->name;
+
+        if (!$searchTerm) {
+            return response()->json(['error' => 'Name query parameter is required'], 400);
+        }
+
+        $products = Product::whereFullText('name', $searchTerm)->get();
+
+        return ProductResource::collection($products);
+    }
+
+
 }

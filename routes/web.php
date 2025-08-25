@@ -33,12 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('list/{list_id}', function ($list_id) {
-        if (! is_numeric($list_id)) {
+        if (!is_numeric($list_id)) {
             abort(422, 'Invalid list ID');
         }
         $list = ListModel::where('id', $list_id)
             ->first();
-        if (! $list) {
+        if (!$list) {
             abort(404, 'List not found');
         }
         if ($list->created_by !== auth()->id()) {
@@ -68,8 +68,11 @@ Route::prefix('api/v1')->middleware(['auth', 'verified'])->group(function () {
         Route::put('/{row_id}', [ListRowController::class, 'update']);
         Route::delete('/{row_id}', [ListRowController::class, 'destroy']);
     });
+    Route::prefix('products')->group(function () {
+        Route::get('/search/{name}', [ProductController::class, 'searchByName']);
+    });
 
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
