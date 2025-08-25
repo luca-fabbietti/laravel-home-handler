@@ -10,6 +10,7 @@ class ListRow extends Model
 {
     use hasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'list_id',
         'product_id',
@@ -26,6 +27,7 @@ class ListRow extends Model
     {
         return $this->belongsTo(ListModel::class, 'list_id');
     }
+
     /**
      * Get the product associated with the row.
      */
@@ -33,6 +35,7 @@ class ListRow extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
     /**
      * Get the user that created the row.
      */

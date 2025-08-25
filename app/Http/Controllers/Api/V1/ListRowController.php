@@ -22,7 +22,7 @@ class ListRowController extends ApiController
 
         if ($list->createdBy->id !== auth()->id()) {
             return response()->json([
-                'error' => 'Unauthorized access to this list.'
+                'error' => 'Unauthorized access to this list.',
             ], 403);
         }
 
@@ -48,11 +48,12 @@ class ListRowController extends ApiController
 
         if ($list->createdBy->id !== auth()->id()) {
             return response()->json([
-                'error' => 'Unauthorized access to this list.'
+                'error' => 'Unauthorized access to this list.',
             ], 403);
         }
 
         $listRow = ListRow::create([...$validated, 'list_id' => $list_id, 'created_by' => auth()->id()]);
+
         return ListRowResource::make($listRow);
     }
 
@@ -62,6 +63,7 @@ class ListRowController extends ApiController
     public function update(ListRowRequest $request)
     {
         ListRow::where('id', $request->row_id)->update($request->validated());
+
         return back()->with('success', 'Row successfully edited.');
     }
 
@@ -73,6 +75,7 @@ class ListRowController extends ApiController
         ListRow::where('list_id', $request->list_id)
             ->where('id', $request->row_id)
             ->delete();
+
         return back()->with('success', 'Row successfully deleted.');
     }
 }

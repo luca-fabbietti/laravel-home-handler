@@ -53,6 +53,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class, 'created_by');
     }
+
     /**
      * Get the lists created by the user.
      */
@@ -60,6 +61,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(ListModel::class, 'created_by');
     }
+
     /**
      * Get the list rows created by the user.
      */
