@@ -8,8 +8,25 @@ import { useState } from 'react';
 export function SheetEditRow({ rowId, listId, quantity, quantityUnit, productId }: { rowId: number; listId: number; quantity: string; quantityUnit: string; productId: number }) {
     const [qtyValue, setQtyValue] = useState(quantity);
     const [qtyUnit, setQtyUnit] = useState(quantityUnit);
+    const [open, setOpen] = useState(false);
+
+        const handleSave = () => {
+            const quantity = (document.getElementById('sheet-edit-row-quantity') as HTMLInputElement).value;
+            const quantityUnit = (document.getElementById('sheet-edit-row-unit') as HTMLInputElement).value;
+            router.put(
+                `/api/v1/lists/${listId}/rows/${rowId}`,
+                {
+                    qty_value: quantity,
+                    qty_uom: quantityUnit,
+                    product_id: productId,
+                },
+                {},
+            );
+            setOpen(false); // Close sheet after save
+        };
+
     return (
-        <Sheet>
+        <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
                 <Button variant="ghost" className="px-2! py-1.5! text-sm! font-light!">
                     Edit row
@@ -34,23 +51,13 @@ export function SheetEditRow({ rowId, listId, quantity, quantityUnit, productId 
                     <Button
                         type="submit"
                         onClick={() => {
-                            const quantity = (document.getElementById('sheet-edit-row-quantity') as HTMLInputElement).value;
-                            const quantityUnit = (document.getElementById('sheet-edit-row-unit') as HTMLInputElement).value;
-                            router.put(
-                                `/api/v1/lists/${listId}/rows/${rowId}`,
-                                {
-                                    qty_value: quantity,
-                                    qty_uom: quantityUnit,
-                                    product_id: productId,
-                                },
-                                {},
-                            );
+                            handleSave();
                         }}
                     >
                         Save changes
                     </Button>
                     <SheetClose asChild>
-                        <Button variant="outline">Close</Button>
+                        <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
                     </SheetClose>
                 </SheetFooter>
             </SheetContent>
