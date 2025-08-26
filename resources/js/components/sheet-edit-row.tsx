@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
+import { ComboboxFindProduct } from '@/components/combobox-find-product';
 
 export function SheetEditRow({
     rowId,
