@@ -60,7 +60,7 @@ export function ComboboxFindProduct() {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-                    {value ? products.find((product) => product.id === value)?.attributes.name : 'Select product...'}
+                    {value ? products.find((product) => product.attributes.name === value)?.attributes.name : 'Select product...'}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -80,7 +80,7 @@ export function ComboboxFindProduct() {
                                 return (
                                     <CommandItem
                                         key={product.id}
-                                        value={product.id}
+                                        value={product.attributes.name}
                                         onSelect={(currentValue) => {
                                             setValue(currentValue === value ? '' : currentValue);
                                             setOpen(false);
