@@ -59,6 +59,10 @@ export function SheetEditRow({
                         <Label htmlFor="sheet-edit-row-unit">Quantity unit</Label>
                         <Input id="sheet-edit-row-unit" value={qtyUnit} onChange={(event) => setQtyUnit(event.target.value)} />
                     </div>
+                    <div className="grid gap-3">
+                        <Label htmlFor="sheet-edit-row-product">Product</Label>
+                        <ComboboxFindProduct classNames={"z-[1000]"}/>
+                    </div>
                 </div>
                 <SheetFooter>
                     <Button
