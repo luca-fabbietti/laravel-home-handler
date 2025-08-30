@@ -45,9 +45,13 @@ export interface User {
 }
 
 export interface Product {
-    id: number;
-    name: string;
-    description: string;
+    type: string;
+    id: string;
+    attributes: {
+        name: string;
+        description: string | null;
+        created_by: number;
+    };
 }
 
 export interface List {

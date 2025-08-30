@@ -7,20 +7,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Product } from '@/types';
 
-type Product = {
-    type: string;
-    id: string;
-    attributes: {
-        name: string;
-        description: string | null;
-        created_by: number;
-    };
-};
-
-export function ComboboxFindProduct({ classNames }: { classNames?: string }) {
+export function ComboboxFindProduct({ classNames, oldProductId }: { classNames?: string; oldProductId: number }) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('');
+    const [productId, setProductId] = useState<number>(oldProductId);
     const [searchTerm, setSearchTerm] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -78,6 +70,7 @@ export function ComboboxFindProduct({ classNames }: { classNames?: string }) {
                                             value={product.attributes.name}
                                             onSelect={(currentValue) => {
                                                 setValue(currentValue === value ? '' : currentValue);
+                                                setProductId(parseInt(product.id, 10));
                                                 setOpen(false);
                                             }}
                                         >
@@ -92,6 +85,7 @@ export function ComboboxFindProduct({ classNames }: { classNames?: string }) {
                 </PopoverContent>
             </Popover>
             <div ref={portalContainerRef} />
+            <input value={productId} id="sheet-product-id-input" type="hidden" />
         </div>
     );
 }

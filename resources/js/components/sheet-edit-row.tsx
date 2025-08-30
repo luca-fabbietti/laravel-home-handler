@@ -26,12 +26,13 @@ export function SheetEditRow({
     const handleSave = () => {
         const quantity = (document.getElementById('sheet-edit-row-quantity') as HTMLInputElement).value;
         const quantityUnit = (document.getElementById('sheet-edit-row-unit') as HTMLInputElement).value;
+        const newProductId = (document.getElementById('sheet-product-id-input') as HTMLInputElement).value;
         router.put(
             `/api/v1/lists/${listId}/rows/${rowId}`,
             {
                 qty_value: quantity,
                 qty_uom: quantityUnit,
-                product_id: productId,
+                product_id: newProductId,
             },
             {},
         );
@@ -61,7 +62,7 @@ export function SheetEditRow({
                     </div>
                     <div className="grid gap-3">
                         <Label htmlFor="sheet-edit-row-product">Product</Label>
-                        <ComboboxFindProduct classNames={"z-[1000]"}/>
+                        <ComboboxFindProduct classNames={"z-[1000]"} oldProductId={productId}/>
                     </div>
                 </div>
                 <SheetFooter>
