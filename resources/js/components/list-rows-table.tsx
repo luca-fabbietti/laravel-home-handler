@@ -29,21 +29,27 @@ import {
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ListRow } from '@/types';
+import { clsx } from 'clsx';
 
 const columns: ColumnDef<ListRow>[] = [
     {
         id: 'id',
         accessorKey: 'id',
-        header: ({ table }) => (
-            <Checkbox
-                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-        ),
+        header: () => <div className="capitalize">Completed</div>,
+        cell: ({ row }) => {
+            row.toggleSelected(row.original.attributes.completed);
+            console.log(row);
+            return (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => {
+                        console.log(value);
+                        // TODO: Update completed status via API
+                    }}
+                    aria-label="Select row"
+                />
+            );
+        },
         enableSorting: false,
         enableHiding: false,
     },
@@ -58,20 +64,30 @@ const columns: ColumnDef<ListRow>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => <div className="capitalize">{row.getValue('attributes.product.name')}</div>,
+        cell: ({ row }) => (
+            <div className={clsx('capitalize', row.original.attributes.completed ? 'line-through' : '')}>
+                {row.getValue('attributes.product.name')}
+            </div>
+        ),
     },
     {
         id: 'attributes.quantity',
         accessorKey: 'attributes.quantity',
         header: 'Quantity',
-        cell: ({ row }) => <div className="lowercase">{row.getValue('attributes.quantity')}</div>,
+        cell: ({ row }) => (
+            <div className={clsx('lowercase', row.original.attributes.completed ? 'line-through' : '')}>{row.getValue('attributes.quantity')}</div>
+        ),
     },
     {
         id: 'attributes.quantity_unit',
         accessorKey: 'attributes.quantity_unit',
         header: () => <div className="text-right">U.O.M.</div>,
         cell: ({ row }) => {
-            return <div className="text-right font-medium">{row.getValue('attributes.quantity_unit')}</div>;
+            return (
+                <div className={clsx('text-right font-medium', row.original.attributes.completed ? 'line-through' : '')}>
+                    {row.getValue('attributes.quantity_unit')}
+                </div>
+            );
         },
     },
     {
@@ -209,9 +225,6 @@ export function ListRowsTable({ data }: { data: ListRow[] }) {
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
                 <div className="space-x-2">
                     <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
                         Previous
