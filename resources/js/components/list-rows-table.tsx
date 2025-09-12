@@ -29,6 +29,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ListRow } from '@/types';
+import { router } from '@inertiajs/react';
 import { clsx } from 'clsx';
 
 const columns: ColumnDef<ListRow>[] = [
@@ -42,8 +43,14 @@ const columns: ColumnDef<ListRow>[] = [
             return (
                 <Checkbox
                     checked={row.getIsSelected()}
-                    onCheckedChange={(value) => {
-                        console.log(value);
+                    onCheckedChange={async (value) => {
+                        const rowId = row.original.id;
+                        const listId = row.original.attributes.list_id;
+                        router.put(`/api/v1/lists/${listId}/rows/${rowId}`, {
+                            // _token: props.csrf_token,
+                            completed: !!value,
+                        });
+                        // row.toggleSelected(!!value);
                         // TODO: Update completed status via API
                     }}
                     aria-label="Select row"

@@ -33,20 +33,37 @@ class ListRowRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
+        $baseRules = [
             'list_id' => 'required|integer|exists:lists,id',
         ];
 
-        $storeOrUpdateRules = [
-            'product_id' => 'required|integer|exists:products,id',
-            'qty_value' => 'required|string',
-            'qty_uom' => 'required|string',
-        ];
-
-        if ($this->isMethod('POST') || $this->isMethod('PUT')) {
-            $rules = array_merge($rules, $storeOrUpdateRules);
+        if ($this->isMethod('POST')) {
+            $storeRules = [
+                'product_id' => 'required|integer|exists:products,id',
+                'qty_value' => 'required|string',
+                'qty_uom' => 'required|string',
+            ];
+            return array_merge($baseRules, $storeRules);
         }
 
-        return $rules;
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $updateRules = [
+                'row_id' => 'required|integer|exists:list_rows,id',
+                'product_id' => 'sometimes|required|integer|exists:products,id',
+                'qty_value' => 'sometimes|required|string',
+                'qty_uom' => 'sometimes|required|string',
+                'completed' => 'sometimes|required|boolean',
+            ];
+            return array_merge($baseRules, $updateRules);
+        }
+
+        if ($this->isMethod('DELETE')) {
+            $deleteRules = [
+                'row_id' => 'required|integer|exists:list_rows,id',
+            ];
+            return array_merge($baseRules, $deleteRules);
+        }
+
+        return $baseRules;
     }
 }
