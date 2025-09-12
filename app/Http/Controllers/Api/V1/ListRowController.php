@@ -62,7 +62,9 @@ class ListRowController extends ApiController
      */
     public function update(ListRowRequest $request)
     {
-        ListRow::where('id', $request->row_id)->update($request->validated());
+        $cleanedData = $request->validated();
+        unset($cleanedData['row_id']);
+        ListRow::where('id', $request->row_id)->update($cleanedData);
 
         return back()->with('success', 'Row successfully edited.');
     }
@@ -77,5 +79,26 @@ class ListRowController extends ApiController
             ->delete();
 
         return back()->with('success', 'Row successfully deleted.');
+    }
+
+    public function toggleCompleted(ListRowRequest $request)
+    {
+        request()->validate([
+            'list_id' => 'required|integer|exists:lists,id',
+            'row_id' => 'required|integer|exists:list_rows,id',
+        ]);
+
+        $list = ListModel::find($request->list_id);
+
+        if ($list->createdBy->id !== auth()->id()) {
+            return response()->json([
+                'error' => 'Unauthorized access to this list.',
+            ], 403);
+        }
+
+        $listRow = ListRow::find($request->row_id);
+        $listRow->completed = !$listRow->completed;
+        $listRow->save();
+        return ListRowResource::make($listRow);
     }
 }
