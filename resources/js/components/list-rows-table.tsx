@@ -38,10 +38,9 @@ const columns: ColumnDef<ListRow>[] = [
         accessorKey: 'id',
         header: () => <div className="capitalize">Completed</div>,
         cell: ({ row }) => {
-            row.toggleSelected(row.original.attributes.completed);
             return (
                 <Checkbox
-                    checked={row.getIsSelected()}
+                    checked={!!row.original.attributes.completed}
                     onCheckedChange={async (value) => {
                         const rowId = row.original.id;
                         const listId = row.original.attributes.list_id;
