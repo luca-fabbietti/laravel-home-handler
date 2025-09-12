@@ -47,11 +47,8 @@ const columns: ColumnDef<ListRow>[] = [
                         const rowId = row.original.id;
                         const listId = row.original.attributes.list_id;
                         router.put(`/api/v1/lists/${listId}/rows/${rowId}`, {
-                            // _token: props.csrf_token,
                             completed: !!value,
                         });
-                        // row.toggleSelected(!!value);
-                        // TODO: Update completed status via API
                     }}
                     aria-label="Select row"
                 />
