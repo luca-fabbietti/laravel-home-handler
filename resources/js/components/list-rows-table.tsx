@@ -39,7 +39,6 @@ const columns: ColumnDef<ListRow>[] = [
         header: () => <div className="capitalize">Completed</div>,
         cell: ({ row }) => {
             row.toggleSelected(row.original.attributes.completed);
-            console.log(row);
             return (
                 <Checkbox
                     checked={row.getIsSelected()}
