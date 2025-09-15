@@ -187,17 +187,3 @@ jobs:
             docker compose -f docker-compose.prod.yml up -d
             docker compose -f docker-compose.prod.yml exec -u root php-fpm sh -c "chmod +x /var/www/html/deploy.sh && /var/www/html/deploy.sh"
             docker system prune -f
-
-#      - name: Generate artifact attestation for Nginx
-#        uses: actions/attest-build-provenance@v2
-#        with:
-#          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX}}
-#          subject-digest: ${{ steps.push-nginx.outputs.digest }}
-#          push-to-registry: true
-#
-#      - name: Generate artifact attestation for PHP-FPM
-#        uses: actions/attest-build-provenance@v2
-#        with:
-#          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM}}
-#          subject-digest: ${{ steps.push-php-fpm.outputs.digest }}
-#          push-to-registry: true
