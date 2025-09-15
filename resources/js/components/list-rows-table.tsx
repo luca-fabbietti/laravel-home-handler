@@ -15,6 +15,7 @@ import * as React from 'react';
 
 import { AlertDeleteRow } from '@/components/alert-delete-row';
 import { SheetEditRow } from '@/components/sheet-edit-row';
+import { SheetNewRow } from '@/components/sheet-new-row';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -40,7 +41,7 @@ const columns: ColumnDef<ListRow>[] = [
         cell: ({ row }) => {
             return (
                 <Checkbox
-                    checked={!!row.original.attributes.completed}
+                    checked={row.original.attributes.completed}
                     onCheckedChange={async (value) => {
                         const rowId = row.original.id;
                         const listId = row.original.attributes.list_id;
@@ -226,7 +227,8 @@ export function ListRowsTable({ data }: { data: ListRow[] }) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-between space-x-2 py-4">
+                <SheetNewRow listId={data[0].attributes.list_id} />
                 <div className="space-x-2">
                     <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
                         Previous

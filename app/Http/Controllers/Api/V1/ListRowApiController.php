@@ -7,7 +7,7 @@ use App\Http\Resources\ListRowResource;
 use App\Models\ListModel;
 use App\Models\ListRow;
 
-class ListRowController extends ApiController
+class ListRowApiController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -52,9 +52,9 @@ class ListRowController extends ApiController
             ], 403);
         }
 
-        $listRow = ListRow::create([...$validated, 'list_id' => $list_id, 'created_by' => auth()->id()]);
+        ListRow::create([...$validated, 'list_id' => $list_id, 'created_by' => auth()->id()]);
 
-        return ListRowResource::make($listRow);
+        return back()->with('success', 'Row successfully saved.');
     }
 
     /**
@@ -79,26 +79,5 @@ class ListRowController extends ApiController
             ->delete();
 
         return back()->with('success', 'Row successfully deleted.');
-    }
-
-    public function toggleCompleted(ListRowRequest $request)
-    {
-        request()->validate([
-            'list_id' => 'required|integer|exists:lists,id',
-            'row_id' => 'required|integer|exists:list_rows,id',
-        ]);
-
-        $list = ListModel::find($request->list_id);
-
-        if ($list->createdBy->id !== auth()->id()) {
-            return response()->json([
-                'error' => 'Unauthorized access to this list.',
-            ], 403);
-        }
-
-        $listRow = ListRow::find($request->row_id);
-        $listRow->completed = !$listRow->completed;
-        $listRow->save();
-        return ListRowResource::make($listRow);
     }
 }

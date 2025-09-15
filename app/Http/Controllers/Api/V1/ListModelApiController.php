@@ -6,7 +6,7 @@ use App\Http\Resources\ListModelResource;
 use App\Models\ListModel;
 use Illuminate\Http\Request;
 
-class ListModelController extends ApiController
+class ListModelApiController extends ApiController
 {
     /**
      * Display a listing of the resource.

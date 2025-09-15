@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types';
 
-export function ComboboxFindProduct({ classNames, oldProductId }: { classNames?: string; oldProductId: number }) {
+export function ComboboxFindProduct({ classNames, oldProductId }: { classNames?: string; oldProductId?: number }) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('');
-    const [productId, setProductId] = useState<number>(oldProductId);
+    const [productId, setProductId] = useState<number>(oldProductId ?? 0);
     const [searchTerm, setSearchTerm] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(false);
