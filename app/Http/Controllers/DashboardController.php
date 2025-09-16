@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 class DashboardController
 {
-    function index()
+    public function index()
     {
         $listsPaginated = ListModel::where('created_by', auth()->id())
             ->with(['rows' => function ($query) {

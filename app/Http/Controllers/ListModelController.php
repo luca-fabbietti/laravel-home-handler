@@ -10,14 +10,14 @@ use Inertia\Inertia;
 
 class ListModelController extends Controller
 {
-    function index($list_id)
+    public function index($list_id)
     {
-        if (!is_numeric($list_id)) {
+        if (! is_numeric($list_id)) {
             abort(422, 'Invalid list ID');
         }
         $list = ListModel::where('id', $list_id)
             ->first();
-        if (!$list) {
+        if (! $list) {
             abort(404, 'List not found');
         }
         if ($list->created_by !== auth()->id()) {

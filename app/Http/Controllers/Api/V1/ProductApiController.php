@@ -73,7 +73,7 @@ class ProductApiController extends ApiController
     {
         $searchTerm = $request->name;
 
-        if (!$searchTerm) {
+        if (! $searchTerm) {
             return response()->json(['error' => 'Name query parameter is required'], 400);
         }
 
@@ -81,6 +81,4 @@ class ProductApiController extends ApiController
 
         return ProductResource::collection($products);
     }
-
-
 }

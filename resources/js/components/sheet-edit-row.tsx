@@ -1,10 +1,10 @@
+import { ComboboxFindProduct } from '@/components/combobox-find-product';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
-import { ComboboxFindProduct } from '@/components/combobox-find-product';
 
 export function SheetEditRow({
     rowId,
@@ -62,7 +62,7 @@ export function SheetEditRow({
                     </div>
                     <div className="grid gap-3">
                         <Label htmlFor="sheet-edit-row-product">Product</Label>
-                        <ComboboxFindProduct classNames={"z-[1000]"} oldProductId={productId}/>
+                        <ComboboxFindProduct classNames={'z-[1000]'} oldProductId={productId} />
                     </div>
                 </div>
                 <SheetFooter>

@@ -43,6 +43,7 @@ class ListRowRequest extends FormRequest
                 'qty_value' => 'required|string',
                 'qty_uom' => 'required|string',
             ];
+
             return array_merge($baseRules, $storeRules);
         }
 
@@ -54,6 +55,7 @@ class ListRowRequest extends FormRequest
                 'qty_uom' => 'sometimes|required|string',
                 'completed' => 'sometimes|required|boolean',
             ];
+
             return array_merge($baseRules, $updateRules);
         }
 
@@ -61,6 +63,7 @@ class ListRowRequest extends FormRequest
             $deleteRules = [
                 'row_id' => 'required|integer|exists:list_rows,id',
             ];
+
             return array_merge($baseRules, $deleteRules);
         }
 
