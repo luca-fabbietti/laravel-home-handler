@@ -1,59 +1,59 @@
 services:
-    web:
-      image: ghcr.io/luca-fabbietti/laravel-home-handler-nginx:ci-test
-      ports:
-        - "80:80"
-        - "443:443"
-      depends_on:
-        - php-fpm
-      networks:
-        - app
-      volumes:
-        - ./infra/certbot/conf:/etc/letsencrypt:ro
-        - ./infra/certbot/www:/var/www/certbot:ro
-        - storage:/var/www/html/public/storage:ro
-    php-fpm:
-      image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm:ci-test
-      expose:
-        - "9000"
-      networks:
-        - app
-      volumes:
-        - storage:/var/www/html/public/storage:rw
-      depends_on:
-        - mysql
-    mysql:
-        image: 'mysql/mysql-server:8.0'
-        environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_ROOT_HOST: '%'
-            MYSQL_DATABASE: '${DB_DATABASE}'
-            MYSQL_USER: '${DB_USERNAME}'
-            MYSQL_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
-        volumes:
-            - 'sail-mysql:/var/lib/mysql'
-        networks:
-            - app
-        healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - '-p${DB_PASSWORD}'
-            retries: 3
-            timeout: 5s
-    certbot:
-      image: certbot/certbot:v4.1.1
-      volumes:
-        - ./infra/certbot/conf:/etc/letsencrypt:rw
-        - ./infra/certbot/www:/var/www/certbot:rw
-      entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  web:
+    image: ghcr.io/luca-fabbietti/laravel-home-handler-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - php-fpm
+    networks:
+      - app
+    volumes:
+      - ./infra/certbot/conf:/etc/letsencrypt:ro
+      - ./infra/certbot/www:/var/www/certbot:ro
+      - storage:/var/www/html/public/storage:ro
+  php-fpm:
+    image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm
+    expose:
+      - "9000"
+    networks:
+      - app
+    volumes:
+      - storage:/var/www/html/public/storage:rw
+    depends_on:
+      - mysql
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'sail-mysql:/var/lib/mysql'
+    networks:
+      - app
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - '-p${DB_PASSWORD}'
+      retries: 3
+      timeout: 5s
+  certbot:
+    image: certbot/certbot:v4.1.1
+    volumes:
+      - ./infra/certbot/conf:/etc/letsencrypt:rw
+      - ./infra/certbot/www:/var/www/certbot:rw
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 networks:
-    app:
-        driver: bridge
+  app:
+    driver: bridge
 volumes:
-    sail-mysql:
-        driver: local
-    storage:
-        driver: local
+  sail-mysql:
+    driver: local
+  storage:
+    driver: local

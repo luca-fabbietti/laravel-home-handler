@@ -127,14 +127,18 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_NGINX }}
-          tags: type=raw,value=${{ github.ref_name }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=latest
 
       - name: Extract metadata (tags, labels) for Docker PHP-FPM
         id: meta-php-fpm
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PHP_FPM }}
-          tags: type=raw,value=${{ github.ref_name }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=latest
 
       - name: Build and push Docker image Nginx
         id: push-nginx
