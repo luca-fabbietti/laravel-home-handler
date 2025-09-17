@@ -26,8 +26,8 @@ It includes features like task management, reminders, and notes.
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/your-project.git
-cd your-project
+git clone https://github.com/luca-fabbietti/laravel-home-handler.git
+cd laravel-home-handler
 
 # Copy environment file
 cp .env.example .env
