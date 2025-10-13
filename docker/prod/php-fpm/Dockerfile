@@ -4,6 +4,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
  && apk del .build-deps
 WORKDIR /var/www/html
 COPY --chown=www-data:www-data . /var/www/html/
+COPY docker/prod/php-fpm/php.ini /usr/local/etc/php/php.ini
 RUN rm -rf ./node_modules
 RUN chmod -R 775 storage bootstrap/cache
 USER www-data
