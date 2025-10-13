@@ -6,12 +6,14 @@ services:
       - "443:443"
     depends_on:
       - php-fpm
+      - portfolio
     networks:
       - app
     volumes:
       - ./infra/certbot/conf:/etc/letsencrypt:ro
       - ./infra/certbot/www:/var/www/certbot:ro
       - storage:/var/www/html/public/storage:ro
+      - storage_portfolio:/var/www/html/public/storage:ro
   php-fpm:
     image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm
     expose:
@@ -22,6 +24,14 @@ services:
       - storage:/var/www/html/public/storage:rw
     depends_on:
       - mysql
+  portfolio:
+    image: ghcr.io/luca-fabbietti/portfolio-laravel-portfolio
+    expose:
+      - "9000"
+    networks:
+      - app
+    volumes:
+      - storage_portfolio:/var/www/html/public/storage:rw
   mysql:
     image: 'mysql/mysql-server:8.0'
     environment:
@@ -56,4 +66,6 @@ volumes:
   sail-mysql:
     driver: local
   storage:
+    driver: local
+  storage_portfolio:
     driver: local
