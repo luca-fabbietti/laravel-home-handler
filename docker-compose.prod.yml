@@ -12,8 +12,8 @@ services:
     volumes:
       - ./infra/certbot/conf:/etc/letsencrypt:ro
       - ./infra/certbot/www:/var/www/certbot:ro
-      - storage:/var/www/html/public/storage:ro
-      - storage_portfolio:/var/www/html/public/storage:ro
+      - storage:/var/www/html/laravel-home/public:ro
+      - storage_portfolio:/var/www/html/portfolio/public:ro
   php-fpm:
     image: ghcr.io/luca-fabbietti/laravel-home-handler-php-fpm
     expose:
@@ -21,7 +21,7 @@ services:
     networks:
       - app
     volumes:
-      - storage:/var/www/html/public/storage:rw
+      - storage:/var/www/html/public:rw
     depends_on:
       - mysql
   portfolio:
@@ -31,7 +31,7 @@ services:
     networks:
       - app
     volumes:
-      - storage_portfolio:/var/www/html/public/storage:rw
+      - storage_portfolio:/var/www/html/public:rw
   mysql:
     image: 'mysql/mysql-server:8.0'
     environment:

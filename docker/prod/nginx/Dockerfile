@@ -7,7 +7,9 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" \
       nginx \
       nginx-mod-http-brotli
 
+RUN mkdir -p /var/www/html/portfolio/public && \
+    mkdir -p /var/www/html/laravel-home/public
+
 COPY docker/prod/nginx/default.conf /etc/nginx/http.d/default.conf
-COPY public /var/www/html/public
 
 CMD ["nginx","-g","daemon off;"]
