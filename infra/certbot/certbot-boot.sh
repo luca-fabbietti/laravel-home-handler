@@ -3,10 +3,9 @@ docker run --rm \
   -v "$(pwd)/conf:/etc/letsencrypt" \
   -v "$(pwd)/www:/var/www/certbot" \
   certbot/certbot certonly \
-    --standalone \
+    --webroot -w /var/www/certbot \
     --preferred-challenges http \
-    -d example.com \ #TODO: replace with your domain
-    -d www.example.com \ #TODO: replace with your domain
-    --email you@example.com \ #TODO: replace with your e-mail
+    -d example.com \
+    --email you@example.com \
     --agree-tos \
     --no-eff-email
